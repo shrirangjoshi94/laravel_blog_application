@@ -6,15 +6,25 @@ use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
+use App\Services\BlogService;
+use App\Http\Requests\BlogInsertRequest;
+use App\Services\CommentService;
 
 class BlogController extends Controller {
 
+    private $blogService;
+    private $commentService;
+
+    public function __construct(BlogService $blogService, CommentService $commentService) {
+
+        $this->blogService = $blogService;
+        $this->commentService = $commentService;
+    }
+
     public function index() {
 
-        $blogList = DB::table("blogs")->get();
+        $blogList = $this->blogService->getAllBlogsService();
         $blogList = (isset($blogList) && !empty($blogList)) ? $blogList : array();
-
-        //print_r($blogList);exit;
 
         return view('listBlogs', [
             "blogList" => $blogList
@@ -26,45 +36,23 @@ class BlogController extends Controller {
         return view("createBlog");
     }
 
-    public function store(Request $request) {
+    public function store(BlogInsertRequest $blogInsertRequest) {
 
-        $rules = [
-            "title" => "bail|required|unique:blogs|max:255",
-            "description" => "required"
-        ];
+        $addNewBlog = $this->blogService->addNewBlogService($blogInsertRequest);
 
-        $validator = Validator::make(Input::all(), $rules);
-        if ($validator->fails()) {
-
-            return back()
-                            ->withErrors($validator)
-                            ->withInput();
+        if ($addNewBlog == 1) {
+            $message = "blog post published successfully!!!";
         } else {
-            $insertQuery = DB::table("blogs")->insert(
-                    [
-                        "title" => $request->title,
-                        "description" => $request->description,
-                        "created_at" => date("Y-m-d h:i:s"),
-                        "updated_at" => date("Y-m-d h:i:s"),
-                    ]
-            );
-
-            if ($insertQuery == 1) {
-                $message = "blog post published successfully!!!";
-            } else {
-                $message = "failed to publish blog post!!!";
-            }
-
-            return redirect("blog")->with('message', $message);
+            $message = "failed to publish blog post!!!";
         }
+
+        return redirect("blog")->with('message', $message);
     }
 
     public function show($id) {
 
-        $blogDetails = DB::table('blogs')->where('id', $id)->first();
-
-        $objCommentController = new CommentsController();
-        $commentDetails = $objCommentController->index($id);
+        $blogDetails = $this->blogService->getBlogDetailsService($id);
+        $commentDetails = $this->commentService->getCommentsForABlogService($id);
 
         return view("viewBlogDetails", [
             "blogDetails" => $blogDetails,

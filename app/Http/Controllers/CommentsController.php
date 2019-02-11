@@ -6,51 +6,53 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
+use App\Services\CommentService;
+use App\Http\Requests\CommentInsertRequest;
 
 class CommentsController extends Controller {
 
-    public function index($id) {
+    private $commentService;
 
-        $getComments = DB::table("blog_comments")
-                ->where("blog_id", "=", $id)
-                ->get();
+    public function __construct(CommentService $commentService) {
 
-        return $getComments;
+        $this->commentService = $commentService;
+    }
+
+    public function index($blogId) {
+//        
     }
 
     public function create() {
 //
     }
 
-    public function store(Request $request) {
+    public function store(CommentInsertRequest $commentInsertRequest) {
 
-        $rules = [
-            "comment" => "required"
-        ];
+        $addComments = $this->commentService->addCommentService($commentInsertRequest);
+        
+        
+        print_r($addComments);exit;
+        
+        $insertQuery = DB::table("blog_comments")->insert(
+                [
+                    "comment" => $request->comment,
+                    "blog_id" => $request->id,
+                    "created_at" => date("Y-m-d h:i:s"),
+                    "updated_at" => date("Y-m-d h:i:s"),
+                ]
+        );
 
-        $validator = Validator::make(Input::all(), $rules);
-        if ($validator->fails()) {
-            return back()
-                            ->withErrors($validator)
-                            ->withInput();
+
+
+
+
+        if ($insertQuery == 1) {
+            $message = "comment added successfully!!!";
         } else {
-            $insertQuery = DB::table("blog_comments")->insert(
-                    [
-                        "comment" => $request->comment,
-                        "blog_id" => $request->id,
-                        "created_at" => date("Y-m-d h:i:s"),
-                        "updated_at" => date("Y-m-d h:i:s"),
-                    ]
-            );
-
-            if ($insertQuery == 1) {
-                $message = "comment added successfully!!!";
-            } else {
-                $message = "failed to add comment!!!";
-            }
-
-            return back()->with('message', $message);
+            $message = "failed to add comment!!!";
         }
+
+        return back()->with('message', $message);
     }
 
     public function show($id) {
