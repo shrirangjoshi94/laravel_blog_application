@@ -65,6 +65,17 @@
         </style>
     </head>
     <body>
+
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
         <!--<div class="flex-center position-ref full-height">-->
         <div class="flex-center position-ref">
             @if (Route::has('login'))

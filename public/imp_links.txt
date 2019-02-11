@@ -1,0 +1,4 @@
+git-hub-url : https://github.com/shrirangjoshi94/laravel_blog_application
+
+imp links : https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_blog_layout
+            https://www.formget.com/bootstrap-comment-box/

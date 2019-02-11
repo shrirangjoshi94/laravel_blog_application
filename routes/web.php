@@ -17,3 +17,4 @@ Route::get('/', function () {
 
 Route::get('/test',"TestController@test");
 Route::resource('/blog',"BlogController");
+Route::resource('/comment',"CommentsController");

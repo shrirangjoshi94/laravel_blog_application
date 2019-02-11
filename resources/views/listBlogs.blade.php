@@ -52,12 +52,19 @@
             .m-b-md {
                 margin-bottom: 30px;
             }
-            
-            
+
+
         </style>
     </head>
 
     <body>
+
+        @if(session()->has('message'))
+        <div class="alert alert-success">
+            {{ session()->get('message') }}
+        </div>
+        @endif
+
         <!--<div class="flex-center position-ref full-height">-->
         <div class="flex-center position-ref">
             @if (Route::has('login'))
@@ -78,7 +85,7 @@
                     <div class="title m-b-md">
                         Laravel Blog Application
                     </div>
-                    
+
                     <div class="m-b-md">
                         <a href="{{url("blog/create")}}"><button type="btn">Add New Blog</button></a>
                     </div>
@@ -92,7 +99,7 @@
                                     {{str_limit($value->description,500)}}       
                                 </p>
                             </article>
-                            <a class="btn pull-right" href="http://bootsnipp.com/user/snippets/2RoQ">READ MORE</a> 
+                            <a class="btn pull-right" href="{{url('blog/'.$value->id)}}">READ MORE</a> 
                         </div>
                         @endforeach
                         <div class="col-md-12 "></div>
