@@ -26,25 +26,12 @@ class CommentsController extends Controller {
 //
     }
 
+    /*
+     * Functin to store the comments on a blog in DB
+     */
     public function store(CommentInsertRequest $commentInsertRequest) {
 
         $addComments = $this->commentService->addCommentService($commentInsertRequest);
-        
-        
-        print_r($addComments);exit;
-        
-        $insertQuery = DB::table("blog_comments")->insert(
-                [
-                    "comment" => $request->comment,
-                    "blog_id" => $request->id,
-                    "created_at" => date("Y-m-d h:i:s"),
-                    "updated_at" => date("Y-m-d h:i:s"),
-                ]
-        );
-
-
-
-
 
         if ($insertQuery == 1) {
             $message = "comment added successfully!!!";

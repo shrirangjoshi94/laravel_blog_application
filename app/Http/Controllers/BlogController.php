@@ -21,8 +21,14 @@ class BlogController extends Controller {
         $this->commentService = $commentService;
     }
 
+    /*
+     * Function to list all blogs in route /blog
+     */
     public function index() {
 
+        /*
+         * get all blogs from DB
+         */
         $blogList = $this->blogService->getAllBlogsService();
         $blogList = (isset($blogList) && !empty($blogList)) ? $blogList : array();
 
@@ -31,11 +37,17 @@ class BlogController extends Controller {
         ]);
     }
 
+    /*
+     *Function to show add blog page 
+     */
     public function create() {
 
         return view("createBlog");
     }
 
+    /*
+     * Function to store the blog details in DB
+     */
     public function store(BlogInsertRequest $blogInsertRequest) {
 
         $addNewBlog = $this->blogService->addNewBlogService($blogInsertRequest);
@@ -49,6 +61,9 @@ class BlogController extends Controller {
         return redirect("blog")->with('message', $message);
     }
 
+    /*
+     * function to show details of a blog with comments on a page
+     */
     public function show($id) {
 
         $blogDetails = $this->blogService->getBlogDetailsService($id);
